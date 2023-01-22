@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import CustomButton from "../CustomButton/CustomButton";
+import CustomInput from "../CustomInput/CustomInput";
 import "./App.css";
 
 function App() {
@@ -16,13 +18,8 @@ function App() {
 
   const [users, setUsers] = useState([]);
 
-  const onChangeUserName = (event) => {
-    setFormUser((prevState) => ({ ...prevState, userName: event.target.value }));
-  };
-
-  const onChangeUserAge = (event) => {
-    setFormUser((prevState) => ({ ...prevState, userAge: event.target.value }));
-  };
+  const handleInputChange = (e, key) =>
+    setFormUser((prevState) => ({ ...prevState, [key]: e.target.value }));
 
   const onSubmitForm = (event) => {
     event.preventDefault();
@@ -78,12 +75,18 @@ function App() {
                     <td>{u.userAge}</td>
                     <td>
                       <div>
-                        <button className="edit-action" onClick={() => onEditUser(u, i)}>
-                          edit
-                        </button>
-                        <button className="remove-action" onClick={() => onRemoveUser(i)}>
-                          remove
-                        </button>
+                        <CustomButton
+                          type="button"
+                          className="edit-action"
+                          label="edit"
+                          handleClick={() => onEditUser(u, i)}
+                        />
+                        <CustomButton
+                          type="button"
+                          className="remove-action"
+                          label="remove"
+                          handleClick={() => onRemoveUser(i)}
+                        />
                       </div>
                     </td>
                   </tr>
@@ -95,23 +98,28 @@ function App() {
         <div>
           <form onSubmit={onSubmitForm}>
             <div>
-              <input
-                type="text"
+              <CustomInput
                 placeholder="Name"
+                handleChange={handleInputChange}
                 value={formUser.userName}
-                onChange={onChangeUserName}
+                field="userName"
               />
             </div>
             <div>
-              <input
-                type="text"
+              <CustomInput
                 placeholder="Age"
+                handleChange={handleInputChange}
                 value={formUser.userAge}
-                onChange={onChangeUserAge}
+                field="userAge"
               />
             </div>
             <div className="buttons-wrapper">
-              <button type="submit">{editUser.isEdit ? "Edit" : "Add"}</button>
+              <CustomButton
+                type="submit"
+                className=""
+                label={editUser.isEdit ? "Edit" : "Add"}
+                handleClick={() => {}}
+              />
             </div>
           </form>
         </div>

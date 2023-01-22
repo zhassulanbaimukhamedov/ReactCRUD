@@ -13,14 +13,6 @@ form {
   flex-direction: column;
 }
 
-input {
-  padding: 5px;
-  margin: 5px 0;
-}
-input:first-child {
-  margin: 0 0 5px;
-}
-
 .buttons-wrapper {
   display: flex;
   justify-content: space-between;

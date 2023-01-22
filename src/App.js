@@ -2,16 +2,19 @@ import React, { useState } from "react";
 import "./App.css";
 
 function App() {
-  const modelUser = {
+  const emptyUser = {
     userName: "",
     userAge: "",
   };
 
-  const [formUser, setFormUser] = useState(modelUser);
+  const [formUser, setFormUser] = useState(emptyUser);
 
-  const [arrUsers, setUsers] = useState([]);
+  const [editUser, setEditUser] = useState({
+    isEdit: false,
+    userIndex: null,
+  });
 
-  const [formMsg, setFormMsg] = useState("");
+  const [users, setUsers] = useState([]);
 
   const onChangeUserName = (event) => {
     setFormUser((prevState) => ({ ...prevState, userName: event.target.value }));
@@ -21,23 +24,36 @@ function App() {
     setFormUser((prevState) => ({ ...prevState, userAge: event.target.value }));
   };
 
-  const onFormSubmit = (event) => {
+  const onSubmitForm = (event) => {
     event.preventDefault();
 
+    setFormUser(emptyUser);
+    setEditUser({
+      isEdit: false,
+      userIndex: null,
+    });
+
     if (formUser.userName && formUser.userAge) {
-      setFormUser(modelUser);
-      setUsers((prevState) => [...prevState, formUser]);
-      setFormMsg("");
-    } else {
-      setFormMsg("Fill in all the fields");
+      if (editUser.isEdit) {
+        const editedUsers = users;
+        editedUsers.splice(editUser.userIndex, 1, formUser);
+        setUsers(editedUsers);
+      } else {
+        setUsers((prevState) => [...prevState, formUser]);
+      }
     }
   };
 
-  const onUserRemove = (index) => {
-    console.log(index);
+  const onRemoveUser = (index) => {
+    setUsers(users.filter((user, userIndex) => userIndex !== index));
   };
-  const onUserEdit = (user) => {
-    console.log(user);
+
+  const onEditUser = (user, index) => {
+    setFormUser(user);
+    setEditUser({
+      isEdit: true,
+      userIndex: index,
+    });
   };
 
   return (
@@ -47,14 +63,14 @@ function App() {
           <table>
             <thead>
               <tr>
-                <th>#</th>
+                <th>№</th>
                 <th>Name</th>
                 <th>Age</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {arrUsers.map((u, i) => {
+              {users.map((u, i) => {
                 return (
                   <tr key={i + 1}>
                     <td>{i + 1}</td>
@@ -62,10 +78,10 @@ function App() {
                     <td>{u.userAge}</td>
                     <td>
                       <div>
-                        <button className="edit-action" onClick={() => onUserEdit(u)}>
+                        <button className="edit-action" onClick={() => onEditUser(u, i)}>
                           edit
                         </button>
-                        <button className="remove-action" onClick={() => onUserRemove(i)}>
+                        <button className="remove-action" onClick={() => onRemoveUser(i)}>
                           remove
                         </button>
                       </div>
@@ -77,7 +93,7 @@ function App() {
           </table>
         </div>
         <div>
-          <form onSubmit={onFormSubmit}>
+          <form onSubmit={onSubmitForm}>
             <div>
               <input
                 type="text"
@@ -95,10 +111,7 @@ function App() {
               />
             </div>
             <div className="buttons-wrapper">
-              <button type="submit">Add</button>
-            </div>
-            <div className="form-msg">
-              <p>{formMsg}</p>
+              <button type="submit">{editUser.isEdit ? "Edit" : "Add"}</button>
             </div>
           </form>
         </div>
